@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>خرید</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
+<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<script>
+ function Unix_timestamp(t) {
+            var dt = new Date(t * 1000);
+			var now= new Date();
+            var dtMonth = dt.getMonth();
+			var nowMonth = now.getMonth();
+			var dtYear=dt.getFullYear();
+			var nowYear=now.getFullYear();
+			//console.log(dtYear);
+			//console.log(dtMonth);
+			//console.log(nowYear);
+			//console.log(nowMonth);
+            return (nowMonth-dtMonth+12) + " ماه پیش ";
+        }
+function nWin(data) {
+
+            var sideBar = $('<div>' + '</div>');
+            sideBar.addClass("side-bar-holder");
+            var proDetails = $('<div>' + '</div>');
+            proDetails.addClass("property-details");
+
+            var dateAndCode = $('<div>' + '</div>');
+            dateAndCode.addClass("be-center space-between flex-row date-and-code");
+            var code = $('<div>' + '</div>');
+            code.html("کد ملک: " + data.id);
+            code.appendTo(dateAndCode);
+            var date = $('<div>' + '</div>');
+            date.html(Unix_timestamp(new Date(data.created_at)));
+            date.css("color", "#517cfb");
+            date.appendTo(dateAndCode);
+
+            dateAndCode.appendTo(proDetails);
+
+
+            var pageTitle = $('<h1>' + '</h1>');
+            pageTitle.addClass("page-title");
+            pageTitle.html(data.title);
+            pageTitle.appendTo(proDetails);
+
+            var price = $('<div>' + '</div>');
+            price.addClass("house-prices ");
+            var priceTitle = $('<span>' + '</span>');
+            priceTitle.addClass("price-title");
+            priceTitle.html("قیمت: ");
+            priceTitle.appendTo(price);
+            var wholePrice = $('<span>' + '</span>');
+            wholePrice.addClass("whole-price");
+            wholePrice.html(parseFloat(data.price / 10000000000) + " میلیارد تومان");
+            wholePrice.appendTo(price);
+            price.appendTo(proDetails);
+
+            var singlePrice = $('<div>' + '</div>');
+            singlePrice.addClass("house-prices");
+            priceTitle = $('<span>' + '</span>');
+            priceTitle.addClass("price-title");
+            priceTitle.html("قیمت هر متر مربع: ");
+            priceTitle.appendTo(singlePrice);
+            wholePrice = $('<span>' + '</span>');
+            wholePrice.addClass("whole-price");
+            wholePrice.html(parseFloat(((data.price * 1000) / 10000000000) / data.area).toPrecision(4) + " میلیون تومان");
+            wholePrice.appendTo(singlePrice);
+            singlePrice.appendTo(proDetails);
+
+            var breakLine = $('<hr />');
+            breakLine.addClass("break-line");
+            breakLine.appendTo(proDetails);
+
+            var houseDetail = $('<div>' + '</div>');
+            houseDetail.addClass("flex-row be-center house-detail");
+            var houseHolder = $('<span>' + '</span>');
+            houseHolder.addClass("flex-row be-center house-detail");
+            houseHolder.html('<i class="fa fa-home" aria-hidden="true"></i>');
+            var houseData = $('<span>' + '</span>');
+            houseData.addClass("flex-row be-center house-detail");
+            houseData.css('margin-right', '5px');
+            houseData.html(data.type);
+            houseHolder.appendTo(houseDetail);
+            houseData.appendTo(houseDetail);
+            houseDetail.appendTo(proDetails);
+
+            var bedroomDetail = $('<div>' + '</div>');
+            bedroomDetail.addClass("flex-row be-center house-detail");
+            var bedroomHolder = $('<span>' + '</span>');
+            bedroomHolder.addClass("flex-row be-center house-detail");
+            bedroomHolder.html('<i class="fa fa-bed" aria-hidden="true"></i>');
+            var bedroomData = $('<span>' + '</span>');
+            bedroomData.addClass("flex-row be-center house-detail");
+            bedroomData.css('margin-right', '5px');
+            bedroomData.html(data.bedrooms + " خوابه");
+            bedroomHolder.appendTo(bedroomDetail);
+            bedroomData.appendTo(bedroomDetail);
+            bedroomDetail.appendTo(proDetails);
+
+            var areaDetail = $('<div>' + '</div>');
+            areaDetail.addClass("flex-row be-center house-detail");
+            var areaHolder = $('<span>' + '</span>');
+            areaHolder.addClass("flex-row be-center house-detail");
+            areaHolder.html('<i class="fa fa-square" aria-hidden="true"></i>');
+            var areaData = $('<span>' + '</span>');
+            areaData.addClass("flex-row be-center house-detail");
+            areaData.css('margin-right', '5px');
+            areaData.html(data.area + " متر مربع");
+            areaHolder.appendTo(areaDetail);
+            areaData.appendTo(areaDetail);
+            areaDetail.appendTo(proDetails);
+
+            var parkingDetail = $('<div>' + '</div>');
+            parkingDetail.addClass("flex-row be-center house-detail");
+            var parkingHolder = $('<span>' + '</span>');
+            parkingHolder.addClass("flex-row be-center house-detail");
+            parkingHolder.html('<i class="fas fa-parking"></i>');
+            var parkingData = $('<span>' + '</span>');
+            parkingData.addClass("flex-row be-center house-detail");
+            parkingData.css('margin-right', '5px');
+            parkingData.html(data.parkings + " عدد پارکینگ");
+            parkingHolder.appendTo(parkingDetail);
+            parkingData.appendTo(parkingDetail);
+            parkingDetail.appendTo(proDetails);
+
+            var agencyInfo = $('<div>' + '</div>');
+            agencyInfo.addClass("flex-cols agency-info");
+
+            var agencyInfoHead = $('<div>' + '</div>');
+            agencyInfoHead.addClass("flex-cols be-center agency-info-header");
+
+            var agencyLogo = $('<div>' + '</div>');
+            agencyLogo.addClass("agency-logo");
+            agencyLogo.css('background-image', 'url(' + data.estate.logo + ')');
+            agencyLogo.appendTo(agencyInfoHead);
+            var agencyName = $('<span>' + '</span>');
+            agencyName.css('text-align', 'center');
+            agencyName.html(data.estate.name);
+            agencyName.appendTo(agencyInfoHead);
+            agencyInfoHead.appendTo(agencyInfo);
+
+            var agencyManager = $('<span>' + '</span>');
+            agencyManager.addClass("agency-manager");
+            agencyManager.html(data.estate.name);
+            agencyManager.appendTo(agencyInfo);
+
+            var agencyPhone = $('<a>' + '</a>');
+            agencyPhone.addClass("flex-row be-center justify-center agency-phone");
+            var str = data.estate.phone;
+            console.log(str.replace(/(?<=\d{4})\d(?=\d{3})/g, "*"));
+            agencyPhone.html(str.replace(/(?<=\d{4})\d(?=\d{3})/g, "*"));
+            agencyPhone.appendTo(agencyInfo);
+
+            agencyPhone.on("click", function () {
+                agencyPhone.html(data.estate.phone);
+            });
+
+
+            proDetails.appendTo(sideBar);
+            agencyInfo.appendTo(sideBar);
+
+
+            var mainContent = $('<div>' + '</div>');
+            mainContent.addClass("main-content");
+            var breadCrumbHolder = $('<div>' + '</div>');
+            breadCrumbHolder.addClass("flex-row be-center bread-crumb-holder");
+            for (let i = 0; i < data.breadcrumb.length; i++) {
+                var element1 = $('<a>' + '</a>');
+                element1.css('font-size', '15px');
+                element1.html(data.breadcrumb[i].name);
+                var arrow = $('<i _ngcontent-c15="" class="fa fa-angle-left" aria-hidden="true"></i>');
+                element1.appendTo(breadCrumbHolder);
+                if (i != data.breadcrumb.length - 1) {
+                    arrow.appendTo(breadCrumbHolder);
+                }
+            }
+            var imageGallery = $('<new-image-gallery>', '</new-image-gallery>');
+            imageGallery.addClass("flex-cols");
+            imageGallery.css('margin-bottom', '24px');
+            var tmpDiv = $('<div>' + '</div>');
+            var currentImage = $('<div>', '</div>');
+            currentImage.addClass("flex-row current-image");
+            var indexOfImg = $('<div>', '</div>');
+            indexOfImg.addClass("flex-row be-center justify-center single-image");
+            var count = 0;
+            var imageAdvertise = $('<img />');
+            imageAdvertise.attr('src', data.pic.images[count]);
+            imageAdvertise.addClass("image-advertise");
+            
+			
+			var numOfimg=$('<button>'+'</button>');
+			numOfimg.addclass=("be-center justify-center flex-row num-of-img");
+			var fraction=$('<div>'+'</div>');
+			fraction.addClass("be-center justify-center flex-row fraction-num");
+			fraction.html(count+1+"/"+data.pic.images.length);
+			fraction.appendTo(numOfimg);
+			
+			var arrowButton = $('<button>' + '</button>');
+            arrowButton.addClass("be-center justify-center flex-row arrow-button arrow-right");
+            arrowButton.html('<svg _ngcontent-c16="" class="ng-tns-c16-8" height="32" viewBox="0 0 18.241 32" width="18.241" xmlns="http://www.w3.org/2000/svg"><path _ngcontent-c16="" class="ng-tns-c16-8" d="M17.585,17.584,3.825,31.343A2.241,2.241,0,0,1,.656,28.174L12.831,16,.657,3.826A2.241,2.241,0,0,1,3.826.656l13.76,13.759a2.241,2.241,0,0,1,0,3.168Z" data-name="Path 5487" fill="rgba(255,255,255,0.7)" id="Path_5487"></path></svg>');
+            var arrowButton2 = $('<button>' + '</button>');
+            arrowButton2.addClass("be-center justify-center flex-row arrow-button arrow-left");
+            arrowButton2.html('<svg _ngcontent-c16="" class="ng-tns-c16-8" height="32" viewBox="0 0 18.241 32" width="18.241" xmlns="http://www.w3.org/2000/svg"><path _ngcontent-c16="" class="ng-tns-c16-8" d="M.656,17.584,14.416,31.343a2.241,2.241,0,0,0,3.169-3.169L5.41,16,17.585,3.826A2.241,2.241,0,1,0,14.415.656L.656,14.416a2.241,2.241,0,0,0,0,3.168Z" data-name="Path 5488" fill="rgba(255,255,255,0.7)" id="Path_5488"></path></svg>');
+            $(arrowButton).on("click", function () {
+                count = (count + 1) % data.pic.images.length;
+                imageAdvertise.attr('src', data.pic.images[count]);
+				fraction.html(count+1+"/"+data.pic.images.length);
+            });
+
+            $(arrowButton2).on("click", function () {
+                count = (count - 1);
+                if (count == -1) {
+                    count = data.pic.images.length - 1;
+                }
+                imageAdvertise.attr('src', data.pic.images[count]);
+				fraction.html(count+1+"/"+data.pic.images.length);
+            });
+
+
+            imageAdvertise.appendTo(indexOfImg);
+            indexOfImg.appendTo(currentImage);
+			numOfimg.appendTo(currentImage);
+            arrowButton.appendTo(currentImage);
+            arrowButton2.appendTo(currentImage);
+            currentImage.appendTo(tmpDiv);
+            tmpDiv.appendTo(imageGallery);
+
+            breadCrumbHolder.appendTo(mainContent);
+            imageGallery.appendTo(mainContent);
+          
+            sideBar.appendTo($("#article"));
+            mainContent.appendTo($("#article"));
+
+        }
+
+var urlParams = new URLSearchParams(window.location.search);
+console.log(urlParams.get('id')); // "edit"
+var pageId=urlParams.get('id');
+$.getJSON('http://hallows.ir/house/' + pageId , function (newData) {
+                        nWin(newData);
+						
+                        console.log(newData);
+                    });
+</script>
+
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+<div id="article" class="flex-row article-container"> </div>
+<h2 class="map-title be-center justify-center">نقشه</h2>
+<div class="map-holder be-center justify-center flex-row">
+<div id="mapid" class=" be-center justify-center flex-cols"></div>
+</div>
+<div class="flex-row be-center justify-center" style="margin-top: 40px;">
+<canvas id="myChart" width="400" height="400"></canvas>
+</div>
+<script>
+var latitude=0;
+var longitude=0;
+//$.getJSON('http://hallows.ir/house/' + pageId , function (newData) {
+//                     latitude=newData.location.lat;
+//					 longitude=newData.location.long;
+//					 console.log(latitude);
+//					 console.log(longitude);
+//                   });
+var mymap = L.map('mapid').setView([35.6892, 51.3890], 13);
+
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+
+L.marker([35.6892, 51.3890]).addTo(mymap)
+    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+    .openPopup();	
+	
+
+
+</script>
+<script>
+$.getJSON('http://hallows.ir/chart', function (newData) {
+//Better to construct options first and then pass it as a parameter
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [newData.data[0].title, newData.data[1].title, newData.data[2].title, newData.data[3].title, newData.data[4].title, newData.data[5].title, newData.data[6].title, newData.data[7].title],
+    datasets: [{
+      label: '# اطلاعات بازار مسکن',
+      data: [ newData.data[0].price,newData.data[1].price,newData.data[2].price,newData.data[3].price,newData.data[4].price,newData.data[5].price, newData.data[6].price,newData.data[7].price],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+              ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: false,
+    scales: {
+      xAxes: [{
+        ticks: {
+          maxRotation: 90,
+          minRotation: 80
+        }
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  }
+});
+
+});
+
+</script>
+
+
+</body>
+</html>
